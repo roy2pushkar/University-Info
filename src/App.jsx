@@ -1,14 +1,14 @@
-// app.jsx
 import React, { useState } from "react";
 import Select from "react-select";
-import useCountries from  "./Hooks/useCountries"
-import useUniversities from "./Hooks/useUniversities"
+import useCountries from "./Hooks/useCountries";
+import useUniversities from "./Hooks/useUniversities";
 
 const App = () => {
   const [countryName, setCountryName] = useState({ value: "", label: "" });
   const { loading: universitiesLoading, error: universitiesError, country: universities } = useUniversities(countryName.value);
 
   const { loading: countryOptionsLoading, error: countryOptionsError, countryOptions } = useCountries();
+  const [selectedUniversity, setSelectedUniversity] = useState(null);
 
   const handleSearch = () => {
     if (countryName.value.trim() === "") {
@@ -16,10 +16,19 @@ const App = () => {
       return;
     }
     setCountryName({ value: countryName.value, label: countryName.value });
+    // Clear selected university when searching
+    setSelectedUniversity(null);
   };
 
   const handleInputChange = (selectedOption) => {
     setCountryName(selectedOption);
+    // Clear selected university when changing the country
+    setSelectedUniversity(null);
+  };
+
+  const handleUniversityClick = (university) => {
+    // Toggle selected university on click
+    setSelectedUniversity(selectedUniversity === university ? null : university);
   };
 
   return (
@@ -48,20 +57,36 @@ const App = () => {
       {countryOptionsError && <p className="text-red-500">{countryOptionsError}</p>}
 
       {universities && (
+        <div>
+          <h2>Universities Data:</h2>
+          <ul>
+            {universities.map((university) => (
+              <li
+                key={`${university.name}-${university.country}`}
+                onClick={() => handleUniversityClick(university)}
+                className={`bg-white border p-2 my-2 rounded-md shadow-md cursor-pointer ${
+                  selectedUniversity === university ? "bg-blue-200" : ""
+                }`}
+              >
+                {university.name} - {university.country}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Render additional information about the selected university */}
+     {selectedUniversity && (
   <div>
-    <h2>Universities Data:</h2>
-    <ul>
-      {universities.map((university) => (
-        <li
-          key={`${university.name}-${university.country}`} // Replace with the actual properties that create a unique key
-          className="bg-white border p-2 my-2 rounded-md shadow-md"
-        >
-          {university.name} - {university.country}
-        </li>
-      ))}
-    </ul>
+    <h2>Selected University Details:</h2>
+    <p>Name: {selectedUniversity.name}</p>
+    <p>Country: {selectedUniversity.country}</p>
+    <p>Country: {selectedUniversity.alpha_two_code}</p>
+    {/* Add more details as needed */}
   </div>
 )}
+{console.log("Selected University:", selectedUniversity)}
+
     </div>
   );
 };
