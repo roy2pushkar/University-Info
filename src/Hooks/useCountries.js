@@ -12,6 +12,7 @@ const useCountries = () => {
 
         const response = await fetch(`https://restcountries.com/v3.1/all`);
         const countries = await response.json(); // Corrected syntax for json()
+        console.log(countries);
 
         const formattedCountries = countries.map((country) => ({
           value: country.name.common,
