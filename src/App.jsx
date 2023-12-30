@@ -13,20 +13,30 @@ const App = () => {
   const { loading: countryOptionsLoading, error: countryOptionsError, countryOptions } = useCountries();
   const [selectedUniversity, setSelectedUniversity] = useState(null);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const [searchQuery , setSearchQuery] = useState(' ');
 
   const handleSearch = () => {
     if (countryName.value.trim() === '') {
       alert('Please enter a valid country name before searching.');
       return;
     }
+
     setCountryName({ value: countryName.value, label: countryName.value });
     // Clear selected university when searching
     setSelectedUniversity(null);
   };
+ 
+   const handleSearchUniversity = () => {
+   // Set the search query to the entered value
+    setSearchQuery(countryName.value);
+   }
 
   const handleInputChange = (selectedOption) => {
     setCountryName(selectedOption);
+
+     
     // Clear selected university when changing the country
+   
     setSelectedUniversity(null);
   };
 
@@ -49,6 +59,8 @@ const App = () => {
             options={countryOptions}
             value={countryName}
             onChange={handleInputChange}
+            isSearchable={true} // Enable search functionality
+            placeholder="Search country..."
             className="w-64"
             styles={{
               control: (provided) => ({
@@ -72,6 +84,19 @@ const App = () => {
           />
           <button
             onClick={handleSearch}
+            className={`px-4 py-2 ${isDarkTheme ? 'bg-blue-500' : 'bg-blue-200'} text-white rounded-md hover:${isDarkTheme ? 'bg-blue-600' : 'bg-blue-300'} focus:outline-none focus:ring focus:border-blue-300`}
+          >
+            Search
+          </button>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search university..."
+            className="px-2 py-1 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+          />
+          <button
+            onClick={handleSearchUniversity}
             className={`px-4 py-2 ${isDarkTheme ? 'bg-blue-500' : 'bg-blue-200'} text-white rounded-md hover:${isDarkTheme ? 'bg-blue-600' : 'bg-blue-300'} focus:outline-none focus:ring focus:border-blue-300`}
           >
             Search
